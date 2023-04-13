@@ -2,16 +2,46 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Shop {
+  id              Int      @id @default(autoincrement())
+  shop_name       String
+  shop_url        String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  access_token    String
+  access_scopes   String
+  users           User[]
+  membership_level String?
+  session         Session?
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  name      String
+  email     String  @unique
+  password  String
+  shop_id   Int
+  profile_picture String
+  shop      Shop   @relation(fields: [shop_id], references: [id])
+
+  @@index([shop_id])
+}
+
+model Session {
+  id          Int      @id @default(autoincrement())
+  created_at  DateTime @default(now())
+  expires_at  DateTime
+  shop_id     Int
+  shop        Shop     @relation(fields: [shop_id], references: [id])
+
+  @@unique([shop_id])
 }
