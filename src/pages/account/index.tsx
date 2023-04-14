@@ -1,7 +1,9 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field } from 'formik'
 import React, { useState } from 'react'
 import { api } from '~/utils/api'
 import * as Yup from 'yup'
+import produce from 'immer'
+import Image from 'next/image'
 
 const UserValidationSchema = Yup.object().shape({
   name: Yup.string()
@@ -16,6 +18,7 @@ const UserValidationSchema = Yup.object().shape({
 const Account = () => {
   const [showPassword, setShowPassword] = useState(false)
   const { data: user } = api.user.getFirst.useQuery()
+  const { mutate } = api.user.update.useMutation()
 
   const NameField = (props: any) => (
     <label className="input-group md:max-w-md">
@@ -34,7 +37,7 @@ const Account = () => {
   const PasswordField = (props: any) => (
     <label className="input-group md:max-w-md">
       <span>Password</span>
-      <input {...props} defaultValue={user?.password} type={showPassword ? "text" : "password"} placeholder="john@doe.cpm" className="input input-bordered w-full "/>
+      <input {...props} defaultValue={user?.password} type={showPassword ? "text" : "password"} placeholder="+_#@$%" className="input input-bordered w-full "/>
       <span>
         <button type="button" onClick={() => setShowPassword(!showPassword)}>  
           {!showPassword ? 
@@ -51,15 +54,24 @@ const Account = () => {
     </label>
   )
 
+  const onSubmit = (values: { name: string, email: string, password: string }) => {
+    const newUserValues = {
+      ...values,
+      id: user?.id || 0,
+    }
+    mutate(newUserValues)
+  }
+
   return (
     <Formik
-      initialValues={{ name:user?.name, email: user?.email, password: user?.password }}
+      initialValues={{ name: user?.name || "", email: user?.email || "", password: user?.password || "" }}
       validationSchema={UserValidationSchema}
-      onSubmit={values => console.log(values)}
+      onSubmit={onSubmit}
     >
       {({ errors, touched }) =>
-      <Form className="">
+      <Form>
         <div className="justify-center flex-wrap flex-col gap-2 form-control p-2">
+          <Image className="self-center" src={user?.profile_picture || ""} height={200} width={200} alt="profile picture" />
           <Field name="name" as={NameField} />
           <Field name="email" as={EmailField} />
           <Field name="password" as={PasswordField} />

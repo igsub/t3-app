@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 body {
-  @apply text-slate-100  bg-gradient-to-b from-[#2e026d] to-[#15162c]
+  @apply text-slate-100  bg-gradient-to-b from-[#2e026d] to-[#15162c];
+}
+
+a {
+  @apply text-sm
 }

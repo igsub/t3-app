@@ -14,14 +14,14 @@ const ProfileButton = () => {
       </label> : null }
       <ul
         tabIndex={0}
-        className="dropdown-content menu p-2 shadow bg-slate-800 rounded-box w-52"
+        className="dropdown-content menu mt-3 shadow-md bg-base-300 rounded-box w-52"
       >
         <p className="text-center">{user?.name}</p>
         <p className="text-center">{user?.email}</p>
-        <li className="border-t-2 mt-4">
+        <li className="border-t-2 mt-2">
           <Link href={"/account"}>My Account</Link>
         </li>
-        <li className="border-t-2">
+        <li className="text-red-500">
           <Link href={"/"}>Log Out</Link>
         </li>
       </ul>
