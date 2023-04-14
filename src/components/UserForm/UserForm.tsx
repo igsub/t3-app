@@ -2,7 +2,7 @@ import { Field, Form, Formik } from 'formik'
 import React from 'react'
 import { api } from '~/utils/api'
 import Image from 'next/image'
-import inputFields, { UserUpdateData, UserValidationSchema } from './UserFormFields'
+import inputFields, { type UserUpdateData, UserValidationSchema } from './UserFormFields'
 
 const UserForm = () => {
   const { data: user } = api.user.getFirst.useQuery()
@@ -47,7 +47,7 @@ const UserForm = () => {
           </button>
         </div>
         <div className="flex flex-col justify-center text-center">
-          { inputFields.map(field => errors[field.name as keyof typeof errors] && touched[field.name as keyof typeof touched] ? <div>{ errors[field.name as keyof typeof errors] }</div> : null) }
+          { inputFields.map(field => errors[field.name as keyof typeof errors] && touched[field.name as keyof typeof touched] ? <div key={`${field.name}-error`}>{ errors[field.name as keyof typeof errors] }</div> : null) }
         </div>
       </Form>}
     </Formik>

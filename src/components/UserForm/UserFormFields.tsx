@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client"
-import { InputHTMLAttributes, useState } from "react"
+import {type InputHTMLAttributes, useState } from "react"
 import * as Yup from 'yup'
 
 /**
@@ -109,7 +109,7 @@ const userData = Prisma.validator<Prisma.UserArgs>()({
 
 export type UserUpdateData = Prisma.UserGetPayload<typeof userData>
 
-export default [
+const userFormFields = [
   {
     name: "name",
     component: NameField
@@ -123,3 +123,5 @@ export default [
     component: PasswordField
   }
 ]
+
+export default userFormFields
