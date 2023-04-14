@@ -14,7 +14,7 @@ const ProfileButton = () => {
       </label> : null }
       <ul
         tabIndex={0}
-        className="dropdown-content menu mt-3 shadow-md bg-base-300 rounded-box w-52"
+        className="dropdown-content menu menu-compact mt-3 p-2 shadow-md bg-base-300 rounded-box w-52"
       >
         <p className="text-center">{user?.name}</p>
         <p className="text-center">{user?.email}</p>
