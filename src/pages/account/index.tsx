@@ -2,7 +2,6 @@ import { Formik, Form, Field } from 'formik'
 import React, { useState } from 'react'
 import { api } from '~/utils/api'
 import * as Yup from 'yup'
-import produce from 'immer'
 import Image from 'next/image'
 
 const UserValidationSchema = Yup.object().shape({
@@ -18,26 +17,32 @@ const UserValidationSchema = Yup.object().shape({
 const Account = () => {
   const [showPassword, setShowPassword] = useState(false)
   const { data: user } = api.user.getFirst.useQuery()
-  const { mutate } = api.user.update.useMutation()
+
+  const ctx = api.useContext()
+  const { mutate, isLoading: updatingUser } = api.user.update.useMutation({
+    onSuccess: () => {
+      ctx.user.getFirst.invalidate()
+    }
+  })
 
   const NameField = (props: any) => (
     <label className="input-group md:max-w-md">
       <span>Name</span>
-      <input {...props} defaultValue={user?.name} type="text" placeholder="John Doe" className="input input-bordered w-full" />
+      <input {...props} type="text" placeholder="John Doe" className="input input-bordered w-full" />
     </label>
     )
 
   const EmailField = (props: any) => (
     <label className="input-group md:max-w-md">
       <span>Email</span>
-      <input {...props} defaultValue={user?.email} type="email" placeholder="john@doe.cpm" className="input input-bordered w-full" />
+      <input {...props} type="email" placeholder="john@doe.cpm" className="input input-bordered w-full" />
     </label>
   )
  
   const PasswordField = (props: any) => (
     <label className="input-group md:max-w-md">
       <span>Password</span>
-      <input {...props} defaultValue={user?.password} type={showPassword ? "text" : "password"} placeholder="+_#@$%" className="input input-bordered w-full "/>
+      <input {...props} type={showPassword ? "text" : "password"} placeholder="+_#@$%" className="input input-bordered w-full "/>
       <span>
         <button type="button" onClick={() => setShowPassword(!showPassword)}>  
           {!showPassword ? 
@@ -68,7 +73,7 @@ const Account = () => {
       validationSchema={UserValidationSchema}
       onSubmit={onSubmit}
     >
-      {({ errors, touched }) =>
+      {({ errors, touched, isValid, dirty }) =>
       <Form>
         <div className="justify-center flex-wrap flex-col gap-2 form-control p-2">
           <Image className="self-center" src={user?.profile_picture || ""} height={200} width={200} alt="profile picture" />
@@ -77,7 +82,7 @@ const Account = () => {
           <Field name="password" as={PasswordField} />
         </div>
         <div className="flex justify-center mt-2">
-          <button type="submit" className="btn">
+          <button type="submit" className="btn" disabled={!isValid || !dirty || updatingUser}>
             Save
           </button>
         </div>
@@ -94,7 +99,6 @@ const Account = () => {
         </div>
       </Form>}
     </Formik>
-    
   )
 }
 
